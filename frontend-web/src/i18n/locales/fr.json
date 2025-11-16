@@ -1,0 +1,71 @@
+{
+  "app": {
+    "title": "JOKA",
+    "subtitle": "Découverte et Réservation de Services"
+  },
+  "nav": {
+    "home": "Accueil",
+    "services": "Services",
+    "parcours": "Mon Parcours",
+    "dashboard": "Tableau de bord",
+    "login": "Connexion",
+    "register": "Inscription",
+    "logout": "Déconnexion"
+  },
+  "home": {
+    "hero": {
+      "title": "Découvrez les meilleurs services locaux",
+      "subtitle": "Restaurants, Hébergements, Loisirs et plus encore en Côte d'Ivoire",
+      "cta": "Explorer les services"
+    },
+    "categories": {
+      "title": "Catégories",
+      "restaurant": "Restaurants",
+      "accommodation": "Hébergements",
+      "leisure": "Loisirs",
+      "wellness": "Bien-être",
+      "transport": "Transport",
+      "event": "Événements",
+      "commerce": "Commerces"
+    }
+  },
+  "services": {
+    "title": "Services disponibles",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "noResults": "Aucun service trouvé"
+  },
+  "booking": {
+    "title": "Réservation",
+    "date": "Date",
+    "time": "Heure",
+    "quantity": "Quantité",
+    "total": "Total",
+    "confirm": "Confirmer la réservation",
+    "success": "Réservation confirmée !",
+    "error": "Erreur lors de la réservation"
+  },
+  "payment": {
+    "title": "Paiement",
+    "methods": {
+      "stripe": "Carte bancaire",
+      "orange_money": "Orange Money",
+      "mtn_money": "MTN Money",
+      "moov_money": "Moov Money",
+      "wave": "Wave"
+    },
+    "proceed": "Procéder au paiement",
+    "success": "Paiement réussi !",
+    "error": "Erreur de paiement"
+  },
+  "auth": {
+    "login": "Connexion",
+    "register": "Inscription",
+    "email": "Email",
+    "password": "Mot de passe",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "phone": "Téléphone",
+    "submit": "Envoyer"
+  }
+}

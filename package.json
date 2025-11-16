@@ -1,0 +1,38 @@
+{
+  "name": "joka-platform",
+  "version": "1.0.0",
+  "description": "JOKA - Plateforme de découverte et réservation de services locaux en Côte d'Ivoire",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend-web",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "docker-compose up",
+    "dev:backend": "cd backend && npm run start:dev",
+    "dev:frontend": "cd frontend-web && npm start",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend-web && npm run build",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend-web && npm install && cd ../shared && npm install",
+    "clean": "rm -rf node_modules backend/node_modules frontend-web/node_modules shared/node_modules",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:rebuild": "docker-compose down && docker-compose build && docker-compose up -d"
+  },
+  "keywords": [
+    "joka",
+    "booking",
+    "services",
+    "côte-d'ivoire",
+    "mobile-money",
+    "tourism"
+  ],
+  "author": "JOKA Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  }
+}
