@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database with PostGIS
+  postgres:
+    image: postgis/postgis:14-3.3-alpine
+    container_name: joka-postgres
+    environment:
+      POSTGRES_DB: joka_db
+      POSTGRES_USER: joka_user
+      POSTGRES_PASSWORD: joka_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - joka-network
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    container_name: joka-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - joka-network
+
+  # Backend API (NestJS)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: joka-backend
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: joka_user
+      DATABASE_PASSWORD: joka_password
+      DATABASE_NAME: joka_db
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - joka-network
+    command: npm run start:dev
+
+  # Frontend Web (React)
+  frontend-web:
+    build:
+      context: ./frontend-web
+      dockerfile: Dockerfile
+    container_name: joka-frontend-web
+    environment:
+      REACT_APP_API_URL: http://localhost:3000
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./frontend-web:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - joka-network
+    command: npm start
+
+  # Adminer (Database Management UI)
+  adminer:
+    image: adminer:latest
+    container_name: joka-adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - joka-network
+
+networks:
+  joka-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

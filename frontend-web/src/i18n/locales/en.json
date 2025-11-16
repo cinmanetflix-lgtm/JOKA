@@ -1,0 +1,71 @@
+{
+  "app": {
+    "title": "JOKA",
+    "subtitle": "Local Services Discovery and Booking"
+  },
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "parcours": "My Journey",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "home": {
+    "hero": {
+      "title": "Discover the best local services",
+      "subtitle": "Restaurants, Accommodations, Leisure and more in Côte d'Ivoire",
+      "cta": "Explore services"
+    },
+    "categories": {
+      "title": "Categories",
+      "restaurant": "Restaurants",
+      "accommodation": "Accommodations",
+      "leisure": "Leisure",
+      "wellness": "Wellness",
+      "transport": "Transport",
+      "event": "Events",
+      "commerce": "Commerce"
+    }
+  },
+  "services": {
+    "title": "Available services",
+    "search": "Search",
+    "filter": "Filter",
+    "noResults": "No services found"
+  },
+  "booking": {
+    "title": "Booking",
+    "date": "Date",
+    "time": "Time",
+    "quantity": "Quantity",
+    "total": "Total",
+    "confirm": "Confirm booking",
+    "success": "Booking confirmed!",
+    "error": "Booking error"
+  },
+  "payment": {
+    "title": "Payment",
+    "methods": {
+      "stripe": "Credit Card",
+      "orange_money": "Orange Money",
+      "mtn_money": "MTN Money",
+      "moov_money": "Moov Money",
+      "wave": "Wave"
+    },
+    "proceed": "Proceed to payment",
+    "success": "Payment successful!",
+    "error": "Payment error"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phone": "Phone",
+    "submit": "Submit"
+  }
+}

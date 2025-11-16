@@ -1,0 +1,60 @@
+.header {
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.logo h1 {
+  color: var(--primary-color);
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.nav a {
+  color: var(--text-primary);
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+}
+
+.nav a:hover {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.language-switcher {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.language-switcher button {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  font-weight: 500;
+}
+
+.language-switcher button.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
