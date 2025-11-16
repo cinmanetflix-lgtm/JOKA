@@ -19,7 +19,7 @@ export class AuthService {
    * Register a new user
    */
   async register(registerDto: RegisterDto): Promise<{ user: User; token: string }> {
-    const { email, password, firstName, lastName, phone, role } = registerDto;
+    const { email, password, firstName, lastName, phone } = registerDto;
 
     // Check if user already exists
     const existingUser = await this.userRepository.findOne({
@@ -33,14 +33,15 @@ export class AuthService {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
+    // Create user - Always assign USER role for self-registration
+    // Only admins can create users with other roles through admin endpoints
     const user = this.userRepository.create({
       email,
       password: hashedPassword,
       firstName,
       lastName,
       phone,
-      role: role || UserRole.USER,
+      role: UserRole.USER,
     });
 
     await this.userRepository.save(user);

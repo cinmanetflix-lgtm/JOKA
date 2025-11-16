@@ -1,11 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import Stripe from 'stripe';
 import { Payment, PaymentMethod, PaymentStatus } from './entities/payment.entity';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { BookingsService } from '../bookings/bookings.service';
+import { UserRole } from '../users/entities/user.entity';
 
 @Injectable()
 export class PaymentsService {
@@ -16,6 +17,7 @@ export class PaymentsService {
     private readonly paymentRepository: Repository<Payment>,
     private readonly bookingsService: BookingsService,
     private readonly configService: ConfigService,
+    private readonly dataSource: DataSource,
   ) {
     this.stripe = new Stripe(this.configService.get('STRIPE_SECRET_KEY'), {
       apiVersion: '2024-12-18.acacia',
@@ -35,8 +37,13 @@ export class PaymentsService {
     return this.paymentRepository.save(payment);
   }
 
-  async processStripePayment(paymentId: string): Promise<any> {
-    const payment = await this.findOne(paymentId);
+  async processStripePayment(paymentId: string, userId: string, userRole: UserRole): Promise<any> {
+    const payment = await this.findOne(paymentId, userId, userRole);
+
+    // Validate ownership
+    if (userRole !== UserRole.ADMIN && payment.userId !== userId) {
+      throw new ForbiddenException('You do not have permission to process this payment');
+    }
 
     try {
       const paymentIntent = await this.stripe.paymentIntents.create({
@@ -64,8 +71,13 @@ export class PaymentsService {
     }
   }
 
-  async processMobileMoneyPayment(paymentId: string): Promise<any> {
-    const payment = await this.findOne(paymentId);
+  async processMobileMoneyPayment(paymentId: string, userId: string, userRole: UserRole): Promise<any> {
+    const payment = await this.findOne(paymentId, userId, userRole);
+
+    // Validate ownership
+    if (userRole !== UserRole.ADMIN && payment.userId !== userId) {
+      throw new ForbiddenException('You do not have permission to process this payment');
+    }
 
     // TODO: Implement actual Mobile Money integration
     // For now, this is a placeholder
@@ -78,18 +90,40 @@ export class PaymentsService {
     };
   }
 
-  async confirmPayment(paymentId: string): Promise<Payment> {
-    const payment = await this.findOne(paymentId);
-    payment.status = PaymentStatus.COMPLETED;
-    await this.paymentRepository.save(payment);
+  async confirmPayment(paymentId: string, userId: string, userRole: UserRole): Promise<Payment> {
+    const payment = await this.findOne(paymentId, userId, userRole);
 
-    // Confirm the booking
-    await this.bookingsService.confirm(payment.bookingId);
+    // Validate ownership
+    if (userRole !== UserRole.ADMIN && payment.userId !== userId) {
+      throw new ForbiddenException('You do not have permission to confirm this payment');
+    }
 
-    return payment;
+    // Use a transaction to ensure both payment and booking are updated together
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      // Update payment status
+      payment.status = PaymentStatus.COMPLETED;
+      await queryRunner.manager.save(payment);
+
+      // Confirm the booking
+      await this.bookingsService.confirm(payment.bookingId, userId, userRole);
+
+      await queryRunner.commitTransaction();
+
+      return payment;
+    } catch (error) {
+      // Rollback transaction on error
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
-  async findOne(id: string): Promise<Payment> {
+  async findOne(id: string, userId?: string, userRole?: UserRole): Promise<Payment> {
     const payment = await this.paymentRepository.findOne({
       where: { id },
       relations: ['user', 'booking'],
@@ -97,6 +131,11 @@ export class PaymentsService {
 
     if (!payment) {
       throw new NotFoundException(`Payment with ID ${id} not found`);
+    }
+
+    // Validate resource ownership (unless admin)
+    if (userId && userRole !== UserRole.ADMIN && payment.userId !== userId) {
+      throw new ForbiddenException('You do not have permission to access this payment');
     }
 
     return payment;
